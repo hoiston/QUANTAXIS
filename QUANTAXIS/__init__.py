@@ -279,6 +279,22 @@ from QUANTAXIS.QAUtil import (  # QAPARAMETER
     QATZInfo_CN, future_ip_list, info_ip_list, stock_ip_list, trade_date_sse,
     QA_util_get_next_period, QA_util_get_real_tradeday)
 
+# QAResourceManager - 统一资源管理器 (MongoDB/RabbitMQ/ClickHouse/Redis)
+try:
+    from QUANTAXIS.QAUtil.QAResourceManager import (
+        QAMongoResourceManager,
+        QARabbitMQResourceManager,
+        QAClickHouseResourceManager,
+        QARedisResourceManager,
+        QAResourcePool,
+        get_mongo_resource,
+        get_rabbitmq_resource,
+        get_clickhouse_resource,
+        get_redis_resource,
+    )
+except ImportError:
+    # 资源管理器依赖可选,不阻塞主模块加载
+    pass
 
 from QUANTAXIS.QAPubSub.consumer import subscriber, subscriber_topic, subscriber_routing
 from QUANTAXIS.QAPubSub.producer import publisher, publisher_topic, publisher_routing
@@ -292,6 +308,15 @@ from QUANTAXIS.QAWebServer.server import start_server
 
 from QUANTAXIS.QIFI.QifiAccount import QIFI_Account
 from QUANTAXIS.QIFI.QifiManager import QA_QIFIMANAGER, QA_QIFISMANAGER
+
+# QAMarket - 市场预设和订单/持仓管理
+from QUANTAXIS.QAMarket import (
+    MARKET_PRESET,
+    QA_Order,
+    QA_OrderQueue,
+    QA_Position,
+    QA_PMS,
+)
 
 # QARSBridge - Rust高性能账户和回测 (如果可用)
 try:
@@ -328,9 +353,11 @@ from QUANTAXIS.QAFactor.featureView import QAFeatureView
 from QUANTAXIS.QAFactor.featureAnalysis import QAFeatureAnalysis
 from QUANTAXIS.QAFactor.featurebacktest import QAFeatureBacktest
 
-if sys.version_info.major != 3 or sys.version_info.minor not in [4, 5, 6, 7, 8, 9]:
-    print('wrong version, should be 3.4/3.5/3.6/3.7/3.8 version')
-    sys.exit()
+# Python 3.9-3.12 (与 setup.py 及 QARS2 对齐)
+if sys.version_info < (3, 9) or sys.version_info >= (4, 0):
+    print('QUANTAXIS 2.1+ 需要 Python 3.9-3.12，当前: {}.{}.{}'.format(
+        sys.version_info.major, sys.version_info.minor, sys.version_info.micro))
+    sys.exit(1)
 
 #QA_util_log_info('Welcome to QUANTAXIS, the Version is {}'.format(__version__))
 

@@ -32,8 +32,8 @@ import platform
 import configparser
 try:
     from setuptools import setup
-except:
-    from distutils.core import setup
+except ImportError:
+    from distutils.core import setup  # deprecated in 3.12, fallback for older
 """
 """
 
@@ -77,10 +77,27 @@ NAME = "quantaxis"
 """
 
 """
-PACKAGES = ["QUANTAXIS", "QUANTAXIS.QAFetch", "QUANTAXIS.QACmd", 'QUANTAXIS.QASetting', "QUANTAXIS.QAFactor",
-            "QUANTAXIS.QAEngine", "QUANTAXIS.QAData", "QUANTAXIS.QAAnalysis", "QUANTAXIS.QAPubSub",
-            "QUANTAXIS.QASU", "QUANTAXIS.QAUtil",  "QUANTAXIS.QAIndicator", "QUANTAXIS.QAStrategy",
-            "QUANTAXIS.QAMarket", "QUANTAXIS.QIFI", "QUANTAXIS.QAWebServer"]
+PACKAGES = [
+    "QUANTAXIS",
+    "QUANTAXIS.QAFetch",
+    "QUANTAXIS.QACmd",
+    "QUANTAXIS.QASetting",
+    "QUANTAXIS.QAFactor",
+    "QUANTAXIS.QAEngine",
+    "QUANTAXIS.QAData",
+    "QUANTAXIS.QAAnalysis",
+    "QUANTAXIS.QAPubSub",
+    "QUANTAXIS.QASU",
+    "QUANTAXIS.QAUtil",
+    "QUANTAXIS.QAIndicator",
+    "QUANTAXIS.QAStrategy",
+    "QUANTAXIS.QAMarket",
+    "QUANTAXIS.QIFI",
+    "QUANTAXIS.QAWebServer",
+    "QUANTAXIS.QASchedule",      # v2.1.0新增: 任务调度框架
+    "QUANTAXIS.QARSBridge",      # v2.1.0新增: Rust桥接层 (100x加速)
+    "QUANTAXIS.QADataBridge",    # v2.1.0新增: 跨语言零拷贝通信 (5-10x加速)
+]
 """
 
 """
@@ -113,7 +130,10 @@ URL = "https://github.com/quantaxis/quantaxis"
 LICENSE = "MIT"
 
 with open('requirements.txt') as reqs_file:
-    INSTALL_REQUIRES = reqs_file.readlines()
+    INSTALL_REQUIRES = [
+        line.strip() for line in reqs_file
+        if line.strip() and not line.strip().startswith('#')
+    ]
 
 setup(
     name=NAME,
